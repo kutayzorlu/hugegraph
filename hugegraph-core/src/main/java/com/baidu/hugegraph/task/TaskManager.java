@@ -94,6 +94,9 @@ public final class TaskManager {
         if (!this.taskExecutor.isTerminated()) {
             this.closeTaskTx(graph);
         }
+        if (!this.schedulerExecutor.isTerminated()) {
+            this.closeSchedulerTx(graph);
+        }
     }
 
     private void closeTaskTx(HugeGraphParams graph) {
@@ -129,6 +132,19 @@ public final class TaskManager {
             this.taskExecutor.invokeAll(tasks);
         } catch (Exception e) {
             throw new HugeException("Exception when closing task tx", e);
+        }
+    }
+
+    private void closeSchedulerTx(HugeGraphParams graph) {
+        final Callable<Void> closeTx = () -> {
+            graph.closeTx();
+            return null;
+        };
+
+        try {
+            this.schedulerExecutor.submit(closeTx);
+        } catch (Exception e) {
+            throw new HugeException("Exception when closing scheduler tx", e);
         }
     }
 

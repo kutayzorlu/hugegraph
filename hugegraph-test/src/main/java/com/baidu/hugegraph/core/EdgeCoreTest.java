@@ -4708,6 +4708,9 @@ public class EdgeCoreTest extends BaseCoreTest {
 
         // Clear all
         graph.truncateBackend();
+
+        // Re-init server info after truncate backend
+        graph.serverStarted("server1", "master");
     }
 
     @Test
